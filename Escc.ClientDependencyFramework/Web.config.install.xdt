@@ -1,0 +1,6 @@
+﻿<?xml version="1.0"?>
+<configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <configSections>
+    <section name="clientDependency" type="Escc.ClientDependencyFramework.ClientDependencySection, Escc.ClientDependencyFramework" requirePermission="false"  xdt:Transform="Replace" xdt:Locator="Match(name)" />
+  </configSections>
+</configuration>

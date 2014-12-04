@@ -16,5 +16,12 @@
   <ItemGroup>
     <Compile Include="Escc.ClientDependencyFramework.NuGet.nuspec" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Escc.ClientDependencyFramework\Escc.ClientDependencyFramework.csproj">
+      <Name>Escc.ClientDependencyFramework</Name>
+      <Project>{04c741fa-3adc-4075-84bd-f4a1d1de0085}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\NuBuild\v1\NuBuild.targets" />
 </Project>

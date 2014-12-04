@@ -1,0 +1,10 @@
+﻿<?xml version="1.0"?>
+<clientDependency xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <mvc xdt:Transform="InsertIfMissing" />
+  <mvc defaultRenderer="PolyfillMediaQueryRenderer" xdt:Transform="SetAttributes(defaultRenderer)" xdt:Locator="Condition(@defaultRenderer='StandardRenderer' or not(@defaultRenderer))" />
+  <mvc>
+    <renderers xdt:Transform="InsertIfMissing">
+      <add name="PolyfillMediaQueryRenderer" type="Escc.ClientDependencyFramework.PolyfillMediaQueryRenderer, Escc.ClientDependencyFramework" xdt:Transform="InsertIfMissing" xdt:Locator="Match(name)" />
+    </renderers>
+  </mvc>
+</clientDependency>

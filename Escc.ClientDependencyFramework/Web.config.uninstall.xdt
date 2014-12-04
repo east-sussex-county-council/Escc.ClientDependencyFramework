@@ -2,5 +2,16 @@
 <configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
   <configSections>
     <section name="clientDependency" xdt:Transform="Remove" xdt:Locator="Match(name)" />
+    <section name="clientDependency" type="ClientDependency.Core.Config.ClientDependencySection, ClientDependency.Core" requirePermission="false" xdt:Transform="Insert" />
   </configSections>
+  <clientDependency>
+    <mvc>
+      <renderers>
+        <add name="PolyfillMediaQueryRenderer" xdt:Transform="Remove" xdt:Locator="Match(name)" />
+      </renderers>
+      <renderers xdt:Transform="Remove" xdt:Locator="Condition(count(add) = 0)" />
+    </mvc>
+    <mvc defaultRenderer="StandardRenderer" xdt:Transform="SetAttributes(defaultRenderer)" xdt:Locator="Condition(@defaultRenderer='PolyfillMediaQueryRenderer' or not(@defaultRenderer))" />
+    <mvc xdt:Transform="Remove" xdt:Locator="Condition(count(*)=0 and count(@*)=1)" />
+  </clientDependency>
 </configuration>

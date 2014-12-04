@@ -3,8 +3,17 @@ using System.Configuration;
 
 namespace Escc.ClientDependencyFramework
 {
+    /// <summary>
+    /// Configuration section for the Client Dependency Framework, adapted to allow an appSetting to override the version. This allows it to be updated on Azure without modifying web.config.
+    /// </summary>
     public class ClientDependencySection : ClientDependency.Core.Config.ClientDependencySection
     {
+        /// <summary>
+        /// Gets or sets the version.
+        /// </summary>
+        /// <value>
+        /// The version.
+        /// </value>
         public new int Version
         {
             get

@@ -1,14 +1,43 @@
 Escc.ClientDependencyFramework
 ==============================
 
-[ClientDependency](https://github.com/Shazwazza/ClientDependency) is a framework by Shannon Deminick for simplifying colaborative development of ASP.NET components, allowing components to state what CSS and JavaScript files they require, and ensuring that each file only is only added once to the response. ClientDependency also handles combination, minification and compression of CSS and JavaScript.
+[ClientDependency](https://github.com/Shazwazza/ClientDependency) is a framework by Shannon Deminick for simplifying collaborative development of ASP.NET components, allowing components to state what CSS and JavaScript files they require, and ensuring that each file only is only added once to the response. ClientDependency also handles combination, minification and compression of CSS and JavaScript.
 
 This package adds:
 
 *  The ability to set the version by adding a `ClientDependencyFramework.Version` setting to the `appSettings` section in `web.config` rather than the Client Dependency Framework's own configuration section. This is implemented in [a fork of the original project](https://github.com/east-sussex-county-council/ClientDependency), and means the version can be set using the Microsoft Azure Portal without editing `web.config`. 
 *  A new renderer which looks for media queries and outputs a conditional comment targeting Internet Explorer 8 and below. This can be paired with [a polyfill script](https://github.com/east-sussex-county-council/Escc.EastSussexGovUK/blob/master/js/media-queries.js) to add media query support in those browsers.
+* Helper classes to read file paths and media queries from `web.config`, enabling them to be reused easily while being maintained in one place.
 
-You'll still need to install the separate package for your type of project. For example [ClientDependency-Mvc](http://www.nuget.org/packages/ClientDependency-Mvc/).
+	**C#**
+
+	    Html.RequiresCss(CssFileAlias.Resolve("mystyles"), MediaQueryAlias.Resolve("large"));
+	    Html.RequiresJs(JsFileAlias.Resolve("myscript"));
+
+	**web.config**
+
+		<configuration>
+		  <configSections>
+		    <sectionGroup name="Escc.ClientDependencyFramework">
+		      <section name="MediaQueries" type="System.Configuration.NameValueSectionHandler, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+		      <section name="CssFiles" type="System.Configuration.NameValueSectionHandler, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+		      <section name="ScriptFiles" type="System.Configuration.NameValueSectionHandler, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+		    </sectionGroup>
+		  </configSections>
+		
+		  <Escc.ClientDependencyFramework>
+			<MediaQueries>
+		      <add key="large" value="only screen and (min-width: 800px)" />
+			</MediaQueries>
+		    <CssFiles>
+		      <add key="mystyles" value="/css/styles.css" />
+		    </CssFiles>
+		    <ScriptFiles>
+		      <add key="myscript" value="/js/script.js" />
+		    </ScriptFiles>
+		  </Escc.ClientDependencyFramework>
+		</configuration>
+
 
 
 NuGet
@@ -21,7 +50,8 @@ The NuGet version number of this fork is deliberately higher (1.9.9.x) than the 
 
 ### Escc.ClientDependencyFramework
 
-If you're not using Umbraco, use this NuGet package to add this version of the Client Dependency Framework to your project.
+If you're not using Umbraco, use this NuGet package to add this version of the Client Dependency Framework to your project. You'll still need to install the separate package for your type of project. For example [ClientDependency-Mvc](http://www.nuget.org/packages/ClientDependency-Mvc/).
+
 
 ### Escc.ClientDependencyFramework.Umbraco
 

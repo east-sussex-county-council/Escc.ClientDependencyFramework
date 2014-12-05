@@ -1,9 +1,5 @@
 ﻿<?xml version="1.0"?>
 <configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
-  <configSections>
-    <section name="clientDependency" xdt:Transform="Remove" xdt:Locator="Match(name)" />
-    <section name="clientDependency" type="ClientDependency.Core.Config.ClientDependencySection, ClientDependency.Core" requirePermission="false" xdt:Transform="Insert" />
-  </configSections>
   <clientDependency>
     <mvc>
       <renderers>

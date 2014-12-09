@@ -14,7 +14,9 @@ namespace Escc.ClientDependencyFramework
         /// <returns></returns>
         public static string Resolve(string alias)
         {
-            return ClientDependencyConfiguration.GetSetting("CssFiles", alias);
+            // Return alias if path not found, because it avoids an ArgumentException from the base Client Dependency Framework
+            var path = ClientDependencyConfiguration.GetSetting("CssFiles", alias);
+            return path ?? alias;
         }
     }
 }

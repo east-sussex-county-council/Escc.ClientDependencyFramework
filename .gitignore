@@ -35,3 +35,4 @@ _ReSharper*/
 Properties/PublishProfiles/*
 packages
 .nuget/NuGet.targets
+*.GhostDoc.xml

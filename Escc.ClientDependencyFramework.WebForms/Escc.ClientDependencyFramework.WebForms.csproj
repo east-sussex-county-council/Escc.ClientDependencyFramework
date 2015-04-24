@@ -9,8 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Escc.ClientDependencyFramework.WebForms</RootNamespace>
     <AssemblyName>Escc.ClientDependencyFramework.WebForms</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <AssemblyOriginatorKeyFile>S:\_Strong names\esccdev.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +22,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>S:\_Standards\VS.net Code Analysis\EsccWebTeam.CodeAnalysis.Library.Strict.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,12 +33,17 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Exceptionless">
-      <HintPath>..\packages\Exceptionless.1.5.2121\lib\net45\Exceptionless.dll</HintPath>
+    <Reference Include="Exceptionless, Version=1.5.2121.0, Culture=neutral, PublicKeyToken=fc181f0a46f65747, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Exceptionless.1.5.2121\lib\net35\Exceptionless.dll</HintPath>
     </Reference>
-    <Reference Include="Exceptionless.Models">
-      <HintPath>..\packages\Exceptionless.1.5.2121\lib\net45\Exceptionless.Models.dll</HintPath>
+    <Reference Include="Exceptionless.Models, Version=1.5.2121.0, Culture=neutral, PublicKeyToken=fc181f0a46f65747, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Exceptionless.1.5.2121\lib\net35\Exceptionless.Models.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -42,7 +51,6 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -54,8 +62,8 @@
     <Compile Include="Script.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Web.config.transform" />
     <None Include="packages.config" />
+    <None Include="Web.config.transform" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

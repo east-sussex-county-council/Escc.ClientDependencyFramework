@@ -61,4 +61,8 @@ Umbraco already depends on the original Client Dependency Framework and has its 
 * Has a slightly different config transform to target the non-standard location used by Umbraco
 * Depends on Umbraco, so that Umbraco is added to the target project first, meaning its configuration file is present and able to be transformed by this package.
 
+## Escc.ClientDependency.WebForms
 
+This is a previous, home-grown solution for combining CSS and JavaScript files. New implementations should use the newer approach above, which offers all the same features, as well as extra ones such as compatibility with ASP.NET MVC. 
+
+The `Css` and `Script` classes in this project provide a flexible way to load and concatenate client-side files on WebForms pages, with the bundles worked out at runtime rather than compile time. This is documented in `CombineStaticFilesHandler`.

@@ -53,7 +53,8 @@ namespace Escc.ClientDependencyFramework
             }
             htmlAttributes.Add("class", classValue);
 
-            return "<!--[if (lte IE 8) & !(IEMobile 7) ]>" + base.RenderSingleCssFile(css, htmlAttributes) + "<![endif]-->";
+            // Note that this output is HTML encoded by the base framework, so complex media queries involving an & aren't supported
+            return "<!--[if (lte IE 8)]>" + base.RenderSingleCssFile(css, htmlAttributes) + "<![endif]-->";
         }
     }
 }

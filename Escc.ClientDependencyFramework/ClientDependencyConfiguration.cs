@@ -22,9 +22,19 @@ namespace Escc.ClientDependencyFramework
             var section = (ConfigurationManager.GetSection("Escc.ClientDependencyFramework/" + sectionName) ??
                            ConfigurationManager.GetSection("EsccWebTeam.Egms/" + sectionName))
                            as NameValueCollection;
-            if (section != null && !String.IsNullOrEmpty(section[setting]))
+            if (section != null)
             {
-                return section[setting];
+                // These prefixes set the priority when loading using Escc.ClientDependencyFramework.WebForms.
+                // Here we can just ignore them because priorities are set in a different way.
+                var possiblePrefixes = new [] {String.Empty, "1_", "2_", "3_", "4_", "5_", "6_", "7_", "8_", "9_"};
+                foreach (var possiblePrefix in possiblePrefixes)
+                {
+                    var key = possiblePrefix + setting;
+                    if (!String.IsNullOrEmpty(section[key]))
+                    {
+                        return section[key];
+                    }
+                }
             }
             return null;
         }

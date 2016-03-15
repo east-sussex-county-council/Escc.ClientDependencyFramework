@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0"?>
 <configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
-  <clientDependency>
+  <clientDependency xdt:Locator="Condition(not(@configSource))">
     <mvc>
       <renderers>
         <add name="PolyfillMediaQueryRenderer" xdt:Transform="Remove" xdt:Locator="Match(name)" />
@@ -10,4 +10,21 @@
     <mvc defaultRenderer="StandardRenderer" xdt:Transform="SetAttributes(defaultRenderer)" xdt:Locator="Condition(@defaultRenderer='PolyfillMediaQueryRenderer' or not(@defaultRenderer))" />
     <mvc xdt:Transform="Remove" xdt:Locator="Condition(count(*)=0 and count(@*)=1)" />
   </clientDependency>
+
+  <Escc.ClientDependencyFramework>
+    <CssFiles xdt:Transform="Remove" xdt:Locator="Condition(count(add) = 0)" />
+    <ScriptFiles xdt:Transform="Remove" xdt:Locator="Condition(count(add) = 0)" />
+    <MediaQueries xdt:Transform="Remove" xdt:Locator="Condition(count(add) = 0)" />
+  </Escc.ClientDependencyFramework>
+  <Escc.ClientDependencyFramework xdt:Transform="Remove" xdt:Locator="Condition(count(*) = 0)" />
+
+  <configSections>
+    <sectionGroup name="Escc.ClientDependencyFramework" xdt:Locator="Match(name)">
+      <section name="CssFiles" type="System.Configuration.NameValueSectionHandler, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" xdt:Transform="Remove" xdt:Locator="Condition(@name='CssFiles' and not(/configuration/Escc.ClientDependencyFramework/CssFiles))" />
+      <section name="ScriptFiles" type="System.Configuration.NameValueSectionHandler, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" xdt:Transform="Remove" xdt:Locator="Condition(@name='ScriptFiles' and not(/configuration/Escc.ClientDependencyFramework/ScriptFiles))" />
+      <section name="MediaQueries" type="System.Configuration.NameValueSectionHandler, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" xdt:Transform="Remove" xdt:Locator="Condition(@name='MediaQueries' and not(/configuration/Escc.ClientDependencyFramework/MediaQueries))" />
+    </sectionGroup>
+    <sectionGroup xdt:Transform="Remove" xdt:Locator="Condition(@name='Escc.ClientDependencyFramework' and count(/configuration/Escc.ClientDependencyFramework/*) = 0)" />
+  </configSections>
+  <configSections xdt:Transform="Remove" xdt:Locator="Condition(count(*) = 0)" />
 </configuration>

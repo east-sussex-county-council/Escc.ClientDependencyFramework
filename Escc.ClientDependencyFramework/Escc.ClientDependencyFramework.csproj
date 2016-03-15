@@ -57,10 +57,9 @@
     <None Include="packages.config" />
     <None Include="Umbraco\ClientDependency.config.install.xdt" />
     <None Include="Umbraco\ClientDependency.config.uninstall.xdt" />
-    <None Include="Umbraco\Web.config.install.xdt">
+    <None Include="Web.config.uninstall.xdt">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Web.config.uninstall.xdt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Web.config.install.xdt">

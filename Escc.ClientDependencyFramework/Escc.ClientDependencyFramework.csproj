@@ -55,16 +55,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Umbraco\ClientDependency.config.install.xdt" />
-    <None Include="Umbraco\ClientDependency.config.uninstall.xdt" />
-    <None Include="Web.config.uninstall.xdt">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web.config.install.xdt">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="CustomDictionary.xml" />

@@ -19,4 +19,12 @@
 
     </MediaQueries>
   </Escc.ClientDependencyFramework>
+
+  <system.web>
+    <pages>
+      <controls>
+        <add tagPrefix="ClientDependency" namespace="Escc.ClientDependencyFramework.WebForms" assembly="Escc.ClientDependencyFramework.WebForms"/>
+      </controls>
+    </pages>
+  </system.web>
 </configuration>

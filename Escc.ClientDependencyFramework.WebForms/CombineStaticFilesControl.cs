@@ -137,33 +137,36 @@ namespace Escc.ClientDependencyFramework.WebForms
                 if (String.IsNullOrEmpty(configurationSection)) throw new ArgumentNullException("configurationSection");
                 if (String.IsNullOrEmpty(tagPattern)) throw new ArgumentNullException("tagPattern");
 
-                if (this.fileList.Count > 0)
+                // The settings should be in web.config. Fall back to the old section name if required.
+                this.config = ConfigurationManager.GetSection("Escc.ClientDependencyFramework/" + configurationSection) as NameValueCollection;
+                if (this.config == null) this.config = ConfigurationManager.GetSection("EsccWebTeam.Egms/" + configurationSection) as NameValueCollection;
+
+                // Start with the assumption that this control will render its own HTML
+                this.destinationControl = this;
+
+                if (this.config != null)
                 {
-                    // The settings for using the handler should be in web.config. Fall back to the old section name if required.
-                    this.config = ConfigurationManager.GetSection("Escc.ClientDependencyFramework/" + configurationSection) as NameValueCollection;
-                    if (this.config == null) this.config = ConfigurationManager.GetSection("EsccWebTeam.Egms/" + configurationSection) as NameValueCollection;
-                    if (this.config != null)
+                    // Allow separate handler path for secure access, because the non-secure one might use a cookieless domain that has no certificate
+                    if (this.Context.Request.Url.Scheme.ToUpperInvariant() == "HTTPS" && !String.IsNullOrEmpty(this.config["HttpsHandlerPath"]))
                     {
-                        // Allow separate handler path for secure access, because the non-secure one might use a cookieless domain that has no certificate
-                        if (this.Context.Request.Url.Scheme.ToUpperInvariant() == "HTTPS" && !String.IsNullOrEmpty(this.config["HttpsHandlerPath"]))
-                        {
-                            this.handlerPath = this.config["HttpsHandlerPath"];
-                        }
-
-                        // If not secure or there's no secure handler, use the standard handler
-                        else if (!String.IsNullOrEmpty(this.config["HandlerPath"]))
-                        {
-                            this.handlerPath = this.config["HandlerPath"];
-
-                            // Expand protocol relative URL into absolute URL because IE7/8 will download CSS twice if it's loaded with a protocol relative URL
-                            // http://www.stevesouders.com/blog/2010/02/10/5a-missing-schema-double-download/
-                            if (this.handlerPath.StartsWith("//", StringComparison.Ordinal)) this.handlerPath = this.Context.Request.Url.Scheme + ":" + this.handlerPath;
-                        }
-                        if (Moveable && !String.IsNullOrEmpty(this.config["HandlerPlaceholder"])) this.handlerPlaceholder = this.config["HandlerPlaceholder"];
+                        this.handlerPath = this.config["HttpsHandlerPath"];
                     }
 
+                    // If not secure or there's no secure handler, use the standard handler
+                    else if (!String.IsNullOrEmpty(this.config["HandlerPath"]))
+                    {
+                        this.handlerPath = this.config["HandlerPath"];
+
+                        // Expand protocol relative URL into absolute URL because IE7/8 will download CSS twice if it's loaded with a protocol relative URL
+                        // http://www.stevesouders.com/blog/2010/02/10/5a-missing-schema-double-download/
+                        if (this.handlerPath.StartsWith("//", StringComparison.Ordinal)) this.handlerPath = this.Context.Request.Url.Scheme + ":" + this.handlerPath;
+                    }
+                    if (Moveable && !String.IsNullOrEmpty(this.config["HandlerPlaceholder"])) this.handlerPlaceholder = this.config["HandlerPlaceholder"];
+                }
+
+                if (this.fileList.Count > 0)
+                {
                     // Try to find another instance of this control and append the keys to that, to ensure as few as possible are loaded
-                    this.destinationControl = this;
 
                     // 1. If we we can get the page head, optionally try there.
                     //    Do this before looking in the preferred placeholder, because then the destinationControl 
@@ -201,11 +204,12 @@ namespace Escc.ClientDependencyFramework.WebForms
                         {
                             if (LookForOtherInstances(control)) break;
                         }
-
-                        // And finally add this control to the destinationControl, but later in the page lifecycle
-                        this.Page.PreRenderComplete += new EventHandler(Page_PreRenderComplete);
                     }
                 }
+
+                // And finally add this control to the destinationControl, but later in the page lifecycle
+                // Do this even if this control has no files, because it may have files added to it by others combining with this one
+                this.Page.PreRenderComplete += new EventHandler(Page_PreRenderComplete);
             }
             catch (Exception ex)
             {
@@ -321,11 +325,40 @@ namespace Escc.ClientDependencyFramework.WebForms
                 else if (this.config != null)
                 {
                     // Otherwise just fall back to linking to the file
-                    foreach (string key in fileList)
+
+                    // Allow keys to be preceded by a number between 1 and 9 followed by an underscore. This allows prioritisation of some files so that,
+                    // for example, a script library will always be loaded first. If this pattern is not used and the key is an exact match, treat it like 
+                    // priority 5, or normal priority.
+                    for (var i = 1; i <= 9; i++)
                     {
-                        if (!String.IsNullOrEmpty(this.config[key]))
+                        foreach (string key in fileList)
                         {
-                            string tag = String.Format(CultureInfo.InvariantCulture, tagPattern + Environment.NewLine, AvoidMixedContentWarning(config[key]), AttributesHtml);
+                            string prioritisedKey;
+                            if (i == 5)
+                            {
+                                // Is the key present without a priority?
+                                prioritisedKey = key;
+                                if (config[prioritisedKey] == null)
+                                {
+                                    // No? Then how about with a priority of 5?
+                                    prioritisedKey = i.ToString(CultureInfo.InvariantCulture) + "_" + key;
+                                    if (String.IsNullOrEmpty(config[prioritisedKey]))
+                                    {
+                                        continue;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // Is the key present with the current priority?
+                                prioritisedKey = i.ToString(CultureInfo.InvariantCulture) + "_" + key;
+                                if (String.IsNullOrEmpty(config[prioritisedKey]))
+                                {
+                                    continue;
+                                }
+                            }
+
+                            string tag = String.Format(CultureInfo.InvariantCulture, tagPattern + Environment.NewLine, AvoidMixedContentWarning(config[prioritisedKey]), AttributesHtml);
                             destinationControl.Controls.Add(new LiteralControl(FilterHtml(tag)));
                         }
                     }

@@ -306,21 +306,24 @@ namespace Escc.ClientDependencyFramework.WebForms
                 // If the handler has been configured, build a path for it to handle
                 if (!String.IsNullOrEmpty(handlerPath))
                 {
-                    // Convert the list of file keys into a format suitable for use as a URL
-                    var keys = Regex.Replace(this.Files.Replace(";", "-").ToLowerInvariant(), "[^a-z0-9-]", String.Empty);
+                    if (this.fileList.Count > 0)
+                    {
+                        // Convert the list of file keys into a format suitable for use as a URL
+                        var keys = Regex.Replace(this.Files.Replace(";", "-").ToLowerInvariant(), "[^a-z0-9-]", String.Empty);
 
-                    // If we don't want to cache the result (because it's in development) add a number that changes every time
-                    string nocache = "nocache" + DateTime.UtcNow.Ticks.ToString(CultureInfo.InvariantCulture);
+                        // If we don't want to cache the result (because it's in development) add a number that changes every time
+                        string nocache = "nocache" + DateTime.UtcNow.Ticks.ToString(CultureInfo.InvariantCulture);
 
-                    // Wrap that in a URL
-                    keys = String.Format(CultureInfo.InvariantCulture, handlerPath, keys, nocache);
+                        // Wrap that in a URL
+                        keys = String.Format(CultureInfo.InvariantCulture, handlerPath, keys, nocache);
 
-                    // Ensure SSL requests also load static files using SSL
-                    keys = AvoidMixedContentWarning(keys);
+                        // Ensure SSL requests also load static files using SSL
+                        keys = AvoidMixedContentWarning(keys);
 
-                    // Wrap that URL in an appropriate tag and put it in the best available location
-                    string tag = String.Format(CultureInfo.InvariantCulture, tagPattern + Environment.NewLine, keys, AttributesHtml);
-                    destinationControl.Controls.Add(new LiteralControl(FilterHtml(tag)));
+                        // Wrap that URL in an appropriate tag and put it in the best available location
+                        string tag = String.Format(CultureInfo.InvariantCulture, tagPattern + Environment.NewLine, keys, AttributesHtml);
+                        destinationControl.Controls.Add(new LiteralControl(FilterHtml(tag)));
+                    }
                 }
                 else if (this.config != null)
                 {

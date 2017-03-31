@@ -23,12 +23,9 @@ namespace Escc.ClientDependencyFramework
                              ClientDependencyConfiguration.GetSetting("CssFiles", alias);
             if (!String.IsNullOrEmpty(mediaQuery))
             {
-                // Add a class for the Internet Explorer polyfill to use. See PolyfillMediaQueryRenderer for details.
-                var className = alias.Length > 1 ? alias.Substring(0, 1).ToUpperInvariant() + alias.Substring(1).ToLowerInvariant() : alias.ToUpperInvariant();
                 return new Dictionary<string, string>
                 {
-                    {"media", mediaQuery}, 
-                    {"class", "mq" + className }
+                    {"media", mediaQuery}
                 };
             }
             return null;

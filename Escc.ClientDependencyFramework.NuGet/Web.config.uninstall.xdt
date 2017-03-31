@@ -1,16 +1,5 @@
 ﻿<?xml version="1.0"?>
 <configuration xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
-  <clientDependency>
-    <mvc>
-      <renderers>
-        <add name="PolyfillMediaQueryRenderer" xdt:Transform="Remove" xdt:Locator="Match(name)" />
-      </renderers>
-      <renderers xdt:Transform="Remove" xdt:Locator="Condition(count(add) = 0)" />
-    </mvc>
-    <mvc defaultRenderer="StandardRenderer" xdt:Transform="SetAttributes(defaultRenderer)" xdt:Locator="Condition(@defaultRenderer='PolyfillMediaQueryRenderer' or not(@defaultRenderer))" />
-    <mvc xdt:Transform="Remove" xdt:Locator="Condition(count(*)=0 and count(@*)=1)" />
-  </clientDependency>
-
   <Escc.ClientDependencyFramework>
     <CssFiles xdt:Transform="Remove" xdt:Locator="Condition(count(add) = 0)" />
     <ScriptFiles xdt:Transform="Remove" xdt:Locator="Condition(count(add) = 0)" />

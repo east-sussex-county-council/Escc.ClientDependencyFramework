@@ -68,35 +68,5 @@ namespace Escc.ClientDependencyFramework.WebForms
         {
             this.BuildCombinedTag("CssFiles", true, "<link rel=\"stylesheet\" type=\"text/css\" href=\"{0}\"{1} />");
         }
-
-        /// <summary>
-        /// If a media query is used, include a copy of the stylesheet which always applies to IE6, 7 and 8
-        /// </summary>
-        /// <param name="html">The HTML.</param>
-        /// <returns></returns>
-        protected override string FilterHtml(string html)
-        {
-            // If the media query is not one of the old ones that works everywhere, add a polyfill
-            if (!String.IsNullOrEmpty(Media) && Media.ToUpperInvariant() != "SCREEN" && Media.ToUpperInvariant() != "PRINT")
-            {
-                // Use the media configuration value as a class, if present, which allows JavaScript to find the element and emulate the media query
-                string mediaClass = this.MediaConfiguration;
-                if (!String.IsNullOrEmpty(mediaClass))
-                {
-                    if (this.Attributes.ContainsKey("class")) mediaClass = mediaClass + " " + this.Attributes["class"];
-                    html = html.Replace(" />", " class=\"mq" + mediaClass + "\" />");
-                }
-
-                // Add the IE stylesheet after the main reference, stripping out the media query
-                // NOTE: Don't replace the media query with "screen" as for no obvious reason that breaks the JavaScript polyfill used on the ESCC website
-                html += "<!--[if (lte IE 8) & !(IEMobile 7) ]>" +
-                    html.TrimEnd()
-                    .Replace(" media=\"" + Media + "\"", String.Empty) // strip media query
-                    .Replace(" class=\"mq" + mediaClass + "\"", " class=\"mqIE mq" + mediaClass + "\"") + // add mqIE class
-                    "<![endif]-->" + Environment.NewLine;
-            }
-
-            return html;
-        }
     }
 }

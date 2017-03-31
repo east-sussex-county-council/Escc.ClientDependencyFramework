@@ -5,8 +5,6 @@ Escc.ClientDependencyFramework
 
 This package adds:
 
-*  The ability to set the version by adding a `ClientDependencyFramework.Version` setting to the `appSettings` section in `web.config` rather than the Client Dependency Framework's own configuration section. This is implemented in [a fork of the original project](https://github.com/east-sussex-county-council/ClientDependency), and means the version can be set using the Microsoft Azure Portal without editing `web.config`. 
-*  A new renderer which looks for media queries and outputs a conditional comment targeting Internet Explorer 8 and below. This can be paired with [a polyfill script](https://github.com/east-sussex-county-council/Escc.EastSussexGovUK/blob/master/js/media-queries.js) to add media query support in those browsers.
 * Helper classes to read file paths and media queries from `web.config`, enabling them to be reused easily while being maintained in one place.
 
 	**C#**
@@ -43,10 +41,7 @@ This package adds:
 NuGet
 -----
 
-This project is published as a set of NuGet packages to our private feed. We use [NuBuild](https://github.com/bspell1/NuBuild) to make creating NuGet packages really easy, and [reference our private feed using a nuget.config file](http://blog.davidebbo.com/2014/01/the-right-way-to-restore-nuget-packages.html).
-
-### Our fork of ClientDependency
-The NuGet version number of this fork is deliberately higher (1.9.9.x) than the original so that it will be favoured over the original when resolving dependencies. However, it is kept lower than 2.0.0.0 so that it will be compatible with [Umbraco](https://github.com/umbraco/Umbraco-CMS/), which depends on versions below 2.0.0.0.
+This project is published to our private NuGet feed. We use [NuBuild](https://github.com/bspell1/NuBuild) to make creating NuGet packages really easy, and [reference our private feed using a nuget.config file](http://blog.davidebbo.com/2014/01/the-right-way-to-restore-nuget-packages.html).
 
 ### Escc.ClientDependencyFramework
 

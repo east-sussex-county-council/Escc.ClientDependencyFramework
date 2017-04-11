@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Globalization;
 using System.Security.Principal;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Web.UI;
 using Exceptionless;
 
@@ -161,6 +162,13 @@ namespace Escc.ClientDependencyFramework.WebForms
                         // http://www.stevesouders.com/blog/2010/02/10/5a-missing-schema-double-download/
                         if (this.handlerPath.StartsWith("//", StringComparison.Ordinal)) this.handlerPath = this.Context.Request.Url.Scheme + ":" + this.handlerPath;
                     }
+
+                    // Allow a {hostname} token in the handler path which will resolve to the current HTTP host and port
+                    if (!String.IsNullOrEmpty(this.handlerPath))
+                    {
+                        this.handlerPath = this.handlerPath.Replace("{hostname}", this.Context.Request.Url.Authority);
+                    }
+
                     if (Moveable && !String.IsNullOrEmpty(this.config["HandlerPlaceholder"])) this.handlerPlaceholder = this.config["HandlerPlaceholder"];
                 }
 

@@ -387,9 +387,22 @@ namespace Escc.ClientDependencyFramework.WebForms
         {
             if (virtualPath.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase) || virtualPath.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase))
             {
-                using (WebClient client = new WebClient())
+                try
                 {
-                    return client.DownloadData(virtualPath);
+                    using (WebClient client = new WebClient())
+                    {
+                        return client.DownloadData(virtualPath);
+                    }
+                }
+                catch (WebException exception)
+                {
+                    var data = new Dictionary<string, object>
+                    {
+                        {"URL", virtualPath},
+                        { "Response status", exception.Status}
+                    };
+                    exception.ToExceptionless(true, data).Submit();
+                    return encoding.GetBytes($"/* {virtualPath} returned {exception.Status} */");
                 }
             }
             else

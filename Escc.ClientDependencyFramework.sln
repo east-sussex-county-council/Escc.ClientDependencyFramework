@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Escc.ClientDependencyFramework", "Escc.ClientDependencyFramework\Escc.ClientDependencyFramework.csproj", "{04C741FA-3ADC-4075-84BD-F4A1D1DE0085}"
-EndProject
-Project("{E09DD79A-4488-4AB9-8D3F-A7EEE78BF432}") = "Escc.ClientDependencyFramework.NuGet", "Escc.ClientDependencyFramework.NuGet\Escc.ClientDependencyFramework.NuGet.nuproj", "{5FF50472-2142-43E7-A525-5428265726E5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{997E6E90-D4AD-4878-9492-9B235ECB6AFE}"
 	ProjectSection(SolutionItems) = preProject
@@ -15,8 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Escc.ClientDependencyFramework.WebForms", "Escc.ClientDependencyFramework.WebForms\Escc.ClientDependencyFramework.WebForms.csproj", "{C590DF6D-6EF1-45B1-B77A-DAE56CEF5B26}"
-EndProject
-Project("{E09DD79A-4488-4AB9-8D3F-A7EEE78BF432}") = "Escc.ClientDependencyFramework.WebForms.NuGet", "Escc.ClientDependencyFramework.WebForms.NuGet\Escc.ClientDependencyFramework.WebForms.NuGet.nuproj", "{C1B32435-7324-4C6B-B75B-9E4691D9C6A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,20 +24,15 @@ Global
 		{04C741FA-3ADC-4075-84BD-F4A1D1DE0085}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04C741FA-3ADC-4075-84BD-F4A1D1DE0085}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04C741FA-3ADC-4075-84BD-F4A1D1DE0085}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5FF50472-2142-43E7-A525-5428265726E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5FF50472-2142-43E7-A525-5428265726E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5FF50472-2142-43E7-A525-5428265726E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5FF50472-2142-43E7-A525-5428265726E5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C590DF6D-6EF1-45B1-B77A-DAE56CEF5B26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C590DF6D-6EF1-45B1-B77A-DAE56CEF5B26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C590DF6D-6EF1-45B1-B77A-DAE56CEF5B26}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C590DF6D-6EF1-45B1-B77A-DAE56CEF5B26}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C1B32435-7324-4C6B-B75B-9E4691D9C6A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C1B32435-7324-4C6B-B75B-9E4691D9C6A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C1B32435-7324-4C6B-B75B-9E4691D9C6A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C1B32435-7324-4C6B-B75B-9E4691D9C6A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D2945DBC-1CDE-4D5F-A93B-2D77BA4B5332}
 	EndGlobalSection
 EndGlobal

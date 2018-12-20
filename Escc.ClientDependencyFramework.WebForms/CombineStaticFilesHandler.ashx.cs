@@ -10,7 +10,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
-using Exceptionless;
 
 namespace Escc.ClientDependencyFramework.WebForms
 {
@@ -195,153 +194,144 @@ namespace Escc.ClientDependencyFramework.WebForms
         /// <param name="context">An <see cref="T:System.Web.HttpContext"/> object that provides references to the intrinsic server objects (for example, Request, Response, Session, and Server) used to service HTTP requests.</param>
         public void ProcessRequest(HttpContext context)
         {
-            try
+            // recognise a URL built up by a CombineStaticFilesControl and pick out the relevant information
+            var match = Regex.Match(Path.GetFileName(context.Request.Path), @"(?<nocache>nocache[0-9]+-)?(?<keys>[a-z0-9-]+?)(?<version>-v[0-9]+)?\.(?<type>[A-Za-z0-9]+)$");
+            if (!match.Success)
             {
-                // recognise a URL built up by a CombineStaticFilesControl and pick out the relevant information
-                var match = Regex.Match(Path.GetFileName(context.Request.Path), @"(?<nocache>nocache[0-9]+-)?(?<keys>[a-z0-9-]+?)(?<version>-v[0-9]+)?\.(?<type>[A-Za-z0-9]+)$");
-                if (!match.Success)
+                context.Response.Status = "400 Bad Request";
+                context.Response.StatusCode = 400;
+                try
                 {
-                    new FormatException("Unable to parse the request URL: " + Path.GetFileName(context.Request.Path)).ToExceptionless().Submit();
-                    context.Response.Status = "400 Bad Request";
-                    context.Response.StatusCode = 400;
-                    try
-                    {
-                        context.Response.End();
-                    }
-                    catch (ThreadAbortException)
-                    {
-                        Thread.ResetAbort();
-                    }
-                    return;
+                    context.Response.End();
                 }
-
-                string configKeys = match.Groups["keys"].Value;
-                string contentType = match.Groups["type"].Value.ToUpperInvariant();
-                string version = match.Groups["version"].Value;
-                string cacheKey = configKeys + contentType + version;
-                string configSection = String.Empty;
-                if (contentType.Contains("CSS"))
+                catch (ThreadAbortException)
                 {
-                    contentType = "text/css";
-                    configSection = "CssFiles";
+                    Thread.ResetAbort();
                 }
-                else if (contentType.Contains("JS"))
+                return;
+            }
+
+            string configKeys = match.Groups["keys"].Value;
+            string contentType = match.Groups["type"].Value.ToUpperInvariant();
+            string version = match.Groups["version"].Value;
+            string cacheKey = configKeys + contentType + version;
+            string configSection = String.Empty;
+            if (contentType.Contains("CSS"))
+            {
+                contentType = "text/css";
+                configSection = "CssFiles";
+            }
+            else if (contentType.Contains("JS"))
+            {
+                contentType = "text/javascript";
+                configSection = "ScriptFiles";
+            }
+            else
+            {
+                context.Response.Status = "400 Bad Request";
+                context.Response.StatusCode = 400;
+                try
                 {
-                    contentType = "text/javascript";
-                    configSection = "ScriptFiles";
+                    context.Response.End();
                 }
-                else
+                catch (ThreadAbortException)
                 {
-                    new FormatException("File extension of request must include the string \"css\" or \"js\"").ToExceptionless().Submit();
-                    context.Response.Status = "400 Bad Request";
-                    context.Response.StatusCode = 400;
-                    try
-                    {
-                        context.Response.End();
-                    }
-                    catch (ThreadAbortException)
-                    {
-                        Thread.ResetAbort();
-                    }
-                    return;
+                    Thread.ResetAbort();
                 }
+                return;
+            }
 
-                // Decide if browser supports compressed response
-                bool isCompressed = DO_GZIP && this.CanGZip(context.Request);
+            // Decide if browser supports compressed response
+            bool isCompressed = DO_GZIP && this.CanGZip(context.Request);
 
-                // Response is written as UTF8 encoding. 
-                UTF8Encoding encoding = new UTF8Encoding(false);
-                byte[] fileDivider = encoding.GetBytes(Environment.NewLine);
+            // Response is written as UTF8 encoding. 
+            UTF8Encoding encoding = new UTF8Encoding(false);
+            byte[] fileDivider = encoding.GetBytes(Environment.NewLine);
 
-                // If the set has already been cached, write the response directly from
-                // cache. Otherwise generate the response and cache it
-                if (!this.WriteFromCache(context, cacheKey, isCompressed, contentType))
+            // If the set has already been cached, write the response directly from
+            // cache. Otherwise generate the response and cache it
+            if (!this.WriteFromCache(context, cacheKey, isCompressed, contentType))
+            {
+                using (MemoryStream memoryStream = new MemoryStream(5000))
                 {
-                    using (MemoryStream memoryStream = new MemoryStream(5000))
+                    // Decide regular stream or GZipStream based on whether the response
+                    // can be cached or not
+                    using (Stream writer = isCompressed ?
+                        (Stream)(new GZipStream(memoryStream, CompressionMode.Compress)) :
+                        memoryStream)
                     {
-                        // Decide regular stream or GZipStream based on whether the response
-                        // can be cached or not
-                        using (Stream writer = isCompressed ?
-                            (Stream)(new GZipStream(memoryStream, CompressionMode.Compress)) :
-                            memoryStream)
+
+                        // Load the files defined in config and process each file.
+                        var config = LoadConfiguration(configSection);
+
+                        // Check whether config overrides the default cache duration
+                        if (ConfigurationValue(config, "HttpCacheDays") != null)
                         {
-
-                            // Load the files defined in config and process each file.
-                            var config = LoadConfiguration(configSection);
-
-                            // Check whether config overrides the default cache duration
-                            if (ConfigurationValue(config, "HttpCacheDays") != null)
+                            try
                             {
-                                try
-                                {
-                                    this.CACHE_DURATION = TimeSpan.FromDays(Double.Parse(ConfigurationValue(config, "HttpCacheDays")));
-                                }
-                                catch (FormatException)
-                                {
-                                    new ConfigurationErrorsException("HttpCacheDays in web.config must be an integer. The value found was " + ConfigurationValue(config, "HttpCacheDays")).ToExceptionless().Submit();
-                                }
+                                this.CACHE_DURATION = TimeSpan.FromDays(Double.Parse(ConfigurationValue(config, "HttpCacheDays")));
                             }
-
-                            // Allow keys to be preceded by a number between 1 and 9 followed by an underscore. This allows prioritisation of some files so that,
-                            // for example, a script library will always be loaded first. If this pattern is not used and the key is an exact match, treat it like 
-                            // priority 5, or normal priority.
-                            var keys = new List<string>(configKeys.Split('-'));
-                            for (var i = 1; i <= 9; i++)
+                            catch (FormatException)
                             {
-                                foreach (string key in keys)
+                                // ignore the invalid setting
+                            }
+                        }
+
+                        // Allow keys to be preceded by a number between 1 and 9 followed by an underscore. This allows prioritisation of some files so that,
+                        // for example, a script library will always be loaded first. If this pattern is not used and the key is an exact match, treat it like 
+                        // priority 5, or normal priority.
+                        var keys = new List<string>(configKeys.Split('-'));
+                        for (var i = 1; i <= 9; i++)
+                        {
+                            foreach (string key in keys)
+                            {
+                                string prioritisedKey;
+                                if (i == 5)
                                 {
-                                    string prioritisedKey;
-                                    if (i == 5)
+                                    // Is the key present without a priority?
+                                    prioritisedKey = key;
+                                    if (ConfigurationValue(config, prioritisedKey) == null)
                                     {
-                                        // Is the key present without a priority?
-                                        prioritisedKey = key;
-                                        if (ConfigurationValue(config, prioritisedKey) == null)
-                                        {
-                                            // No? Then how about with a priority of 5?
-                                            prioritisedKey = i.ToString(CultureInfo.InvariantCulture) + "_" + key;
-                                            if (ConfigurationValue(config, prioritisedKey) == null)
-                                            {
-                                                continue;
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        // Is the key present with the current priority?
+                                        // No? Then how about with a priority of 5?
                                         prioritisedKey = i.ToString(CultureInfo.InvariantCulture) + "_" + key;
                                         if (ConfigurationValue(config, prioritisedKey) == null)
                                         {
                                             continue;
                                         }
                                     }
-
-
-                                    byte[] fileBytes = this.GetFileBytes(context, ConfigurationValue(config, prioritisedKey).Trim(), encoding);
-                                    writer.Write(fileBytes, 0, fileBytes.Length);
-                                    writer.Write(fileDivider, 0, fileDivider.Length); // add newline to separate from next file
                                 }
+                                else
+                                {
+                                    // Is the key present with the current priority?
+                                    prioritisedKey = i.ToString(CultureInfo.InvariantCulture) + "_" + key;
+                                    if (ConfigurationValue(config, prioritisedKey) == null)
+                                    {
+                                        continue;
+                                    }
+                                }
+
+
+                                byte[] fileBytes = this.GetFileBytes(context, ConfigurationValue(config, prioritisedKey).Trim(), encoding);
+                                writer.Write(fileBytes, 0, fileBytes.Length);
+                                writer.Write(fileDivider, 0, fileDivider.Length); // add newline to separate from next file
                             }
-                            writer.Close();
                         }
+                        writer.Close();
+                    }
 
-                        // Cache the combined response so that it can be directly written
-                        // in subsequent calls 
-                        byte[] responseBytes = memoryStream.ToArray();
-                        if (responseBytes.Length > 0)
-                        {
-                            context.Cache.Insert(GetCacheKey(cacheKey, isCompressed),
-                                responseBytes, null, System.Web.Caching.Cache.NoAbsoluteExpiration,
-                                CACHE_DURATION);
+                    // Cache the combined response so that it can be directly written
+                    // in subsequent calls 
+                    byte[] responseBytes = memoryStream.ToArray();
+                    if (responseBytes.Length > 0)
+                    {
+                        context.Cache.Insert(GetCacheKey(cacheKey, isCompressed),
+                            responseBytes, null, System.Web.Caching.Cache.NoAbsoluteExpiration,
+                            CACHE_DURATION);
 
-                            // Generate the response
-                            this.WriteBytes(responseBytes, context, isCompressed, contentType);
-                        }
+                        // Generate the response
+                        this.WriteBytes(responseBytes, context, isCompressed, contentType);
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                ex.ToExceptionless().Submit();
             }
         }
 
@@ -396,12 +386,6 @@ namespace Escc.ClientDependencyFramework.WebForms
                 }
                 catch (WebException exception)
                 {
-                    var data = new Dictionary<string, object>
-                    {
-                        {"URL", virtualPath},
-                        { "Response status", exception.Status}
-                    };
-                    exception.ToExceptionless(true, data).Submit();
                     return encoding.GetBytes($"/* {virtualPath} returned {exception.Status} */");
                 }
             }

@@ -7,7 +7,6 @@ using System.Security.Principal;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
-using Exceptionless;
 
 namespace Escc.ClientDependencyFramework.WebForms
 {
@@ -222,7 +221,6 @@ namespace Escc.ClientDependencyFramework.WebForms
             catch (Exception ex)
             {
                 ex.Data.Add("File keys", this.Files);
-                ex.ToExceptionless().Submit();
                 throw;
             }
         }
@@ -428,7 +426,6 @@ namespace Escc.ClientDependencyFramework.WebForms
             }
             catch (Exception ex)
             {
-                ex.ToExceptionless().Submit();
                 return false;
             }
             return false;

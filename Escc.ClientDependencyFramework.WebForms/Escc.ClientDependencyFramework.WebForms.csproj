@@ -38,14 +38,6 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Exceptionless, Version=1.5.2121.0, Culture=neutral, PublicKeyToken=fc181f0a46f65747, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Exceptionless.1.5.2121\lib\net35\Exceptionless.dll</HintPath>
-    </Reference>
-    <Reference Include="Exceptionless.Models, Version=1.5.2121.0, Culture=neutral, PublicKeyToken=fc181f0a46f65747, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Exceptionless.1.5.2121\lib\net35\Exceptionless.Models.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -65,7 +57,6 @@
   <ItemGroup>
     <None Include="build-nuget.cmd" />
     <None Include="Escc.ClientDependencyFramework.WebForms.nuspec" />
-    <None Include="packages.config" />
     <None Include="Web.config.transform" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
